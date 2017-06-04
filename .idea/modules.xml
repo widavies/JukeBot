@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JukeBot.iml" filepath="$PROJECT_DIR$/.idea/modules/JukeBot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JukeBot_main.iml" filepath="$PROJECT_DIR$/.idea/modules/JukeBot_main.iml" group="JukeBot" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JukeBot_test.iml" filepath="$PROJECT_DIR$/.idea/modules/JukeBot_test.iml" group="JukeBot" />
+    </modules>
+  </component>
+</project>
