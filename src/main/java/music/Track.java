@@ -5,6 +5,12 @@ package music;
  */
 public class Track {
 
+    private String identifier;
+
+    public Track(String identifier) {
+        this.identifier = identifier;
+    }
+
     public String getIdentifier() {
         return "";
     }

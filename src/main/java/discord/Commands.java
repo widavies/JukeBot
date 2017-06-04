@@ -1,5 +1,7 @@
 package discord;
 
+import music.MasterQueue;
+import music.Track;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -15,6 +17,8 @@ import net.dv8tion.jda.core.managers.AudioManager;
  */
 public class Commands extends ListenerAdapter {
 
+    private MasterQueue queue;
+
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         String message = event.getMessage().getRawContent();
@@ -27,6 +31,10 @@ public class Commands extends ListenerAdapter {
         if(!isAdmin(event)) return;
 
         /* MUSIC COMMANDS */
+        if(message.startsWith("!add")) queue.add(new Track(message.split("\\s+")[1]));
+        else if(message.startsWith("!play")) queue.play();
+        else if(message.startsWith("!clear")) queue.clear();
+
 
 
 
