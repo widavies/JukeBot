@@ -7,6 +7,7 @@ import files.Settings;
 import music.AudioPlayerSendHandler;
 import music.MasterQueue;
 import music.Track;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -14,8 +15,10 @@ import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
+import tools.Constants;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 /*
  * Listens to channel commands processes them.
@@ -44,8 +47,11 @@ public class Commands extends ListenerAdapter {
 
         /* MUSIC COMMANDS */
         try {
-            if(message.startsWith("!add")) queue.add(new Track(message.split("\\s+")[1]));
-            else if(message.startsWith("!play")) {
+            if(message.startsWith("!add")) {
+                queue.add(new Track(message.split("\\s+")[1]));
+                sendMessage(event, "Added song to queue. There are now "+queue.getSongsInQueue()+" songs in the queue.");
+            }
+            else if(message.equals("!play")) {
                 if(queue.getSongsInQueue() == 0) {
                     sendMessage(event, "There aren't any songs in the queue");
                     return;
@@ -80,7 +86,7 @@ public class Commands extends ListenerAdapter {
             else if(message.equals("!resume")) {
                 VoiceChannel channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
                 if(channel != null) summon(channel);
-                else summon(event.getGuild().getVoiceChannelById("radio"));
+                else summon(event.getGuild().getVoiceChannelById("Radio"));
                 queue.resume();
                 sendMessage(event,"Resuming music...");
             }
@@ -89,13 +95,9 @@ public class Commands extends ListenerAdapter {
                 sendMessage(event, "Set volume to: "+Integer.parseInt(message.split("\\s+")[1]));
             }
             else if(message.startsWith("!moan")) {
-                if(queue.getSongsInQueue() == 0) {
-                    sendMessage(event, "There aren't any songs in the queue");
-                    return;
-                }
                 VoiceChannel channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
                 if(channel != null) summon(channel);
-                else summon(event.getGuild().getVoiceChannelById("radio"));
+                else summon(event.getGuild().getVoiceChannelById("Radio"));
                 queue.addNext(new Track("https://www.youtube.com/watch?v=SNxYku74Q9s"));
                 queue.skip();
             }
@@ -128,7 +130,7 @@ public class Commands extends ListenerAdapter {
                 ArrayList<PlaylistModel> playlists = settings.getPlaylists();
                 sendMessage(event, "Listing playlists....");
                 for(int i = 0; i < playlists.size(); i++) {
-                    sendMessage(event, "["+i+"] "+playlists.get(i).getName());
+                    sendMessageNoDelete(event, "["+i+"] "+playlists.get(i).getName());
                 }
             }
             else if(message.startsWith("delplaylist")) {
@@ -140,9 +142,13 @@ public class Commands extends ListenerAdapter {
                 settings.remove(playlist);
                 sendMessage(event, "Deleted playlist successfully");
             }
+            else if(message.equals("!help")) {
+                event.getAuthor().openPrivateChannel().queue((channel) -> sendAndLog(channel, Constants.HELP_TEXT));
+            }
             new Loader().saveSettings(settings);
 
         } catch(Exception e) {
+            e.printStackTrace();
             sendMessage(event, "Incorrect syntax. Type !help for help.");
         }
     }
@@ -168,6 +174,14 @@ public class Commands extends ListenerAdapter {
     private void sendMessageNoDelete(GuildMessageReceivedEvent event, String message) {
         MessageChannel channel = event.getChannel();
         channel.sendMessage(message).queue();
+    }
+
+    public void sendAndLog(MessageChannel channel, String message)
+    {
+        // Here we use a lambda expressions which names the callback parameter -response- and uses that as a reference
+        // in the callback body -System.out.printf("Sent Message %s", response)-
+        Consumer<Message> callback = (response) -> System.out.printf("Sent Message %s", response);
+        channel.sendMessage(message).queue(callback); // ^ calls that
     }
 
 }

@@ -2,12 +2,13 @@ package files;
 
 import music.Track;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Will Davies on 6/6/2017.
  */
-public class PlaylistModel {
+public class PlaylistModel implements Serializable {
 
     private ArrayList<Track> tracks;
     private String name;

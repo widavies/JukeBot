@@ -12,7 +12,7 @@ public class Track implements Serializable {
     }
 
     public String getIdentifier() {
-        return "";
+        return identifier;
     }
 
 }

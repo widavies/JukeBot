@@ -56,6 +56,10 @@ public class MasterQueue {
 
     // Adds the the track to the very next position in the queue
     public void addNext(Track track) {
+        if(current + 1 >= tracks.size()) {
+            add(track);
+            return;
+        }
         this.tracks.add(current + 1, track);
     }
 
@@ -111,6 +115,7 @@ public class MasterQueue {
     private class TrackLoadListener implements AudioLoadResultHandler {
         @Override
         public void trackLoaded(AudioTrack track) {
+            Log.log("Loaded track");
             player.playTrack(track);
         }
 
@@ -146,7 +151,7 @@ public class MasterQueue {
         public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
             if (endReason.mayStartNext) {
                 current++;
-                //play();
+                play();
             }
         }
         @Override
