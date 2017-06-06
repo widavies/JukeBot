@@ -70,6 +70,16 @@ public class MasterQueue {
         this.tracks.clear();
     }
 
+    public void back() {
+        current--;
+        player.stopTrack();
+        play();
+    }
+
+    public ArrayList<Track> getTracks() {
+        return tracks;
+    }
+
     // Pauses the queue
     public void pause() {
         player.setPaused(true);
@@ -89,7 +99,7 @@ public class MasterQueue {
 
     // Starts playing music at index current
     public void play() {
-        if(current >= tracks.size()) current = 0; // loop back to the beginning if we reach the end of the queue
+        if(current >= tracks.size() || current < 0) current = 0; // loop back to the beginning if we reach the end of the queue
         manager.loadItem(tracks.get(current).getIdentifier(), new TrackLoadListener());
     }
 

@@ -1,5 +1,10 @@
 package discord;
 
+import files.IO;
+import files.Loader;
+import files.PlaylistModel;
+import files.Settings;
+import music.AudioPlayerSendHandler;
 import music.MasterQueue;
 import music.Track;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -10,6 +15,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.AudioManager;
 
+import java.util.ArrayList;
+
 /*
  * Listens to channel commands processes them.
  *
@@ -19,10 +26,15 @@ public class Commands extends ListenerAdapter {
 
     private MasterQueue queue;
 
+    public Commands() {
+        queue = new MasterQueue();
+    }
+
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         String message = event.getMessage().getRawContent();
-
+        Settings settings = new Loader().getSettings();
+        if(settings == null) new Loader().saveSettings(new Settings());
         if(message.startsWith("!ping")) {
             sendMessage(event, "pong!");
         }
@@ -31,16 +43,117 @@ public class Commands extends ListenerAdapter {
         if(!isAdmin(event)) return;
 
         /* MUSIC COMMANDS */
-        if(message.startsWith("!add")) queue.add(new Track(message.split("\\s+")[1]));
-        else if(message.startsWith("!play")) queue.play();
-        else if(message.startsWith("!clear")) queue.clear();
+        try {
+            if(message.startsWith("!add")) queue.add(new Track(message.split("\\s+")[1]));
+            else if(message.startsWith("!play")) {
+                if(queue.getSongsInQueue() == 0) {
+                    sendMessage(event, "There aren't any songs in the queue");
+                    return;
+                }
+                VoiceChannel channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
+                if(channel != null) summon(channel);
+                else summon(event.getGuild().getVoiceChannelById("radio"));
+                queue.play();
+            }
 
+            else if(message.equals("!clear") || message.equals("!stop")) {
+                queue.clear();
+                sendMessage(event, "Queue cleared. Queue contains 0 songs");
+            }
+            else if(message.equals("!skip")) {
+                queue.skip();
+                sendMessage(event, "Skipping song");
+            }
+            else if(message.equals("!back")) {
+                queue.back();
+                sendMessage(event, "Previous song");
+            }
+            else if(message.equals("!playnow")) {
+                queue.addNext(new Track(message.split("\\s+")[1]));
+                queue.skip();
+                sendMessage(event, "Playing song now");
+            }
+            else if(message.equals("!pause")) {
+                queue.pause();
+                sendMessage(event, "JukeBot is paused, use !resume to resume");
+            }
+            else if(message.equals("!resume")) {
+                VoiceChannel channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
+                if(channel != null) summon(channel);
+                else summon(event.getGuild().getVoiceChannelById("radio"));
+                queue.resume();
+                sendMessage(event,"Resuming music...");
+            }
+            else if(message.startsWith("!vol")) {
+                queue.setVolume(Integer.parseInt(message.split("\\s+")[1]));
+                sendMessage(event, "Set volume to: "+Integer.parseInt(message.split("\\s+")[1]));
+            }
+            else if(message.startsWith("!moan")) {
+                if(queue.getSongsInQueue() == 0) {
+                    sendMessage(event, "There aren't any songs in the queue");
+                    return;
+                }
+                VoiceChannel channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
+                if(channel != null) summon(channel);
+                else summon(event.getGuild().getVoiceChannelById("radio"));
+                queue.addNext(new Track("https://www.youtube.com/watch?v=SNxYku74Q9s"));
+                queue.skip();
+            }
+            /* PLAYLIST MANAGEMENT */
+            else if(message.startsWith("!save")) {
+                if(settings.doesExist(message.split("\\s+")[1])) {
+                    sendMessage(event, "A playlist with that name already exists.");
+                    return;
+                }
+                settings.addPlaylist(message.split("\\s+")[1], queue.getTracks());
+                sendMessage(event, "Playlist "+message.split("\\s+")[1]+" saved with "+queue.getSongsInQueue()+" songs.");
+            }
+            else if(message.startsWith("!playlist")) {
+                queue.clear();
+                if(!settings.doesExist(message.split("\\s+")[1])) {
+                    sendMessage(event, "The playlist "+message.split("\\s+")[1]+" does not exist");
+                    return;
+                }
+                VoiceChannel channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
+                if(channel != null) summon(channel);
+                else summon(event.getGuild().getVoiceChannelById("radio"));
+                PlaylistModel playlist = settings.getPlaylist(message.split("\\s+")[1]);
+                for(Track t : playlist.getTracks()) {
+                    queue.addNext(t);
+                }
+                queue.play();
+                sendMessage(event, "Playing playlist...");
+            }
+            else if(message.startsWith("!ls")) {
+                ArrayList<PlaylistModel> playlists = settings.getPlaylists();
+                sendMessage(event, "Listing playlists....");
+                for(int i = 0; i < playlists.size(); i++) {
+                    sendMessage(event, "["+i+"] "+playlists.get(i).getName());
+                }
+            }
+            else if(message.startsWith("delplaylist")) {
+                if(!settings.doesExist(message.split("\\s+")[1])) {
+                    sendMessage(event, "The playlist "+message.split("\\s+")[1]+" does not exist");
+                    return;
+                }
+                PlaylistModel playlist = settings.getPlaylist(message.split("\\s+")[1]);
+                settings.remove(playlist);
+                sendMessage(event, "Deleted playlist successfully");
+            }
+            new Loader().saveSettings(settings);
 
-
-
+        } catch(Exception e) {
+            sendMessage(event, "Incorrect syntax. Type !help for help.");
+        }
     }
 
     // Returns true if the message was sent by an Admin
+    public void summon(VoiceChannel channel) {
+        AudioManager manager = channel.getGuild().getAudioManager();
+        manager.setSendingHandler(new AudioPlayerSendHandler(queue.getPlayer()));
+        manager.openAudioConnection(channel);
+    }
+
     private boolean isAdmin(GuildMessageReceivedEvent event) {
         for(Role r : event.getGuild().getMember(event.getAuthor()).getRoles()) if(r.getName().equalsIgnoreCase("Admin")) return true;
         return false;
@@ -50,6 +163,11 @@ public class Commands extends ListenerAdapter {
         MessageChannel channel = event.getChannel();
         channel.sendMessage(message).queue();
         event.getMessage().delete().queue();
+    }
+
+    private void sendMessageNoDelete(GuildMessageReceivedEvent event, String message) {
+        MessageChannel channel = event.getChannel();
+        channel.sendMessage(message).queue();
     }
 
 }
