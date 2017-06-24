@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SpotifyToYoutube {
 
-    public ArrayList<music.Track> convert(String URL) {
+    public ArrayList<Track> convert(String URL) {
         final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
         final JsonFactory JSON_FACTORY = new JacksonFactory();
 
@@ -46,7 +46,7 @@ public class SpotifyToYoutube {
             final Playlist playlist = request2.get();
 
 
-            ArrayList<music.Track> tracks = new ArrayList<>();
+            ArrayList<Track> tracks = new ArrayList<>();
 
             // Search YouTube for a similar tracks
             YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, request1 -> {
@@ -60,7 +60,7 @@ public class SpotifyToYoutube {
                 search.setQ(t.getTrack().getName());
                 SearchListResponse searchListResponse = search.execute();
                 List<SearchResult> result = searchListResponse.getItems();
-                tracks.add(new music.Track("https://www.youtube.com/watch?v="+getID(result.iterator())));
+                tracks.add(new Track("https://www.youtube.com/watch?v="+getID(result.iterator())));
             }
             return tracks;
         } catch(Exception e) {

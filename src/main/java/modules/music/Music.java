@@ -1,11 +1,9 @@
 package modules.music;
 
-import files.Loader;
-import files.PlaylistModel;
-import files.Settings;
+import models.Loader;
+import models.PlaylistModel;
+import models.Settings;
 import modules.Module;
-import music.MasterQueue;
-import music.Track;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
@@ -15,11 +13,11 @@ import java.util.ArrayList;
  */
 public class Music extends Module {
 
-    private MasterQueue queue;
+    private Queue queue;
     private Settings settings;
 
     public Music() {
-        queue = new MasterQueue();
+        queue = new Queue();
         settings = new Loader().getSettings();
     }
 
@@ -56,7 +54,7 @@ public class Music extends Module {
                 queue.back();
                 reply(event, "Playing previous song...", true);
                 return true;
-            } else if (message.equals("clear") || message.equals("stop")) {
+            } else if (message.equals("stop")) {
                 queue.clear();
                 reply(event, "Queue cleared", true);
                 return true;
@@ -69,7 +67,6 @@ public class Music extends Module {
                 reply(event, "Resuming tunes...", true);
                 return true;
             } else if (message.startsWith("!vol")) {
-                reply(event, "Volume changed from " + queue.getVolume() + " to " + Integer.parseInt(message.split("\\s+")[1]), true);
                 queue.setVolume(Integer.parseInt(message.split("\\s+")[1]));
                 return true;
             } else if (message.startsWith("!playnow")) {
@@ -115,10 +112,10 @@ public class Music extends Module {
                     return true;
                 } else if (tokens[2].contains("spotify")) { // creating from Spotify playlist
                     // Smart playlist getter
-                    reply(event, "Accessing Spotify and YouTube databases. This will take about 30 seconds.", false);
+                    reply(event, "Accessing Spotify and YouTube databases. This will take about 30 seconds.", true);
                     ArrayList<Track> tracks = new SpotifyToYoutube().convert(tokens[2]);
                     settings.addPlaylist(tokens[1], tracks);
-                    reply(event, "Created playlist: " + tokens[1] + " with " + tracks.size() + " songs. Use !p "+tokens[1]+ " to play your new playlist.", true);
+                    reply(event, "Created playlist: " + tokens[1] + " with " + tracks.size() + " songs. Use !p "+tokens[1]+ " to play your new playlist.", false);
                     new Loader().saveSettings(settings);
                     return true;
                 } else if (tokens[2].equals("q")) {

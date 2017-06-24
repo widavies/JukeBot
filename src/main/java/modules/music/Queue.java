@@ -1,19 +1,17 @@
-package music;
+package modules.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import logging.Log;
+import tools.Log;
 
-import javax.swing.plaf.basic.BasicSliderUI;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -25,7 +23,7 @@ import java.util.Collections;
  *
  *
  */
-public class MasterQueue {
+public class Queue {
     // Audio libraries for controlling playback
     private AudioPlayer player;
     private AudioPlayerManager manager;
@@ -36,7 +34,7 @@ public class MasterQueue {
     // The currently playing track index
     private int current;
 
-    public MasterQueue() {
+    public Queue() {
         tracks = new ArrayList<>();
 
         manager = new DefaultAudioPlayerManager();

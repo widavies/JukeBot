@@ -1,4 +1,4 @@
-package music;
+package modules.music;
 
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;

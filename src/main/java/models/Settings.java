@@ -1,7 +1,6 @@
-package files;
+package models;
 
-import com.sun.media.jfxmedia.events.PlayerStateEvent;
-import music.Track;
+import modules.music.Track;
 
 import java.io.Serializable;
 import java.util.ArrayList;

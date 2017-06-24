@@ -1,46 +1,53 @@
 package main;
 
-import discord.Commands;
-import logging.Log;
+import models.Loader;
+import models.Settings;
+import modules.Module;
+import modules.general.General;
+import modules.music.Music;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import tools.Log;
 import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import tools.Constants;
 
 import javax.security.auth.login.LoginException;
+import java.util.ArrayList;
 
-/* Design specifications - Will
+/**
+ * Top level class, start bot here.
  *
- * -We need a logger class so we can keep track of events happening on the server, logger classe needs to save logs to a file
- * -This bot will run on a Raspberry PI, it needs to be stable and bug free so it can run forever, I don't wanna deal with
- * rebooting, etc.
- * -The bot will be moduler, seperate functions by packages and link them with the Commands class
- *
+ * @since v0.1
+ * @author Will Davies
  */
 
+public class Main extends ListenerAdapter {
 
-/*
- * TODO:
- *
- * -Method that a String of how long the bot has been running
- * -Method that returns system stats (Raspberry PI)
- * -IO class that can serialiaze and deserialize a Settings object
- * -Playlist & Track models for serialization
- * -Logger utility (can save files to Settings model)
- *
- *
- *
- *
- *
- */
+    private final ArrayList<Module> modules;
 
-public class Main {
+    public Main() {
+        Settings settings = new Loader().getSettings();
+        if(settings == null) {
+            new Loader().saveSettings(new Settings());
+            Log.log("Settings file doesn't exist, creating one.");
+        }
+
+        modules = new ArrayList<>();
+        modules.add(new General());
+        modules.add(new Music());
+    }
+
+    @Override
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+        for(Module m : modules) m.processCommand(event);
+    }
 
     public static void main(String[] args) {
         Log.log("Starting JukeBot...");
         try {
-            new JDABuilder(AccountType.BOT).setToken(Constants.DISCORD_TOKEN).addEventListener(new Commands()).buildBlocking();
+            new JDABuilder(AccountType.BOT).setToken(Constants.DISCORD_TOKEN).addEventListener(new Main()).buildBlocking();
         } catch (InterruptedException e) {
             Log.log("Interrupted exception.");
         } catch (RateLimitedException e) {

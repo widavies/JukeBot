@@ -1,16 +1,13 @@
 package modules;
 
-import music.AudioPlayerReceiveHandler;
-import music.AudioPlayerSendHandler;
-import music.MasterQueue;
-import net.dv8tion.jda.core.entities.Message;
+import modules.music.AudioPlayerReceiveHandler;
+import modules.music.AudioPlayerSendHandler;
+import modules.music.Queue;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
-
-import java.util.function.Consumer;
 
 /**
  * JukeBot is modular. Any additional modules should
@@ -57,13 +54,12 @@ public abstract class Module {
      * @param message the message to send to the user
      */
     protected void replyPrivately(GuildMessageReceivedEvent event, String message) {
-        event.getAuthor().openPrivateChannel().queue((channel) -> sendAndLog(channel, message));
+        event.getAuthor().openPrivateChannel().queue((channel) -> send(channel, message));
         event.getMessage().delete().queue();
     }
 
-    private void sendAndLog(MessageChannel channel, String message) {
-        Consumer<Message> callback = (response) -> System.out.printf("Sent private message %s", response);
-        channel.sendMessage(message).queue(callback); // ^ calls that
+    private void send(MessageChannel channel, String message) {
+        channel.sendMessage(message).queue();
     }
 
     /**
@@ -87,7 +83,7 @@ public abstract class Module {
      *
      * @param event
      */
-    protected void smartSummon(GuildMessageReceivedEvent event, MasterQueue queue) {
+    protected void smartSummon(GuildMessageReceivedEvent event, Queue queue) {
         VoiceChannel channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
         if(channel != null) summon(channel, queue);
         else summon(event.getGuild().getVoiceChannelsByName("radio", true).get(0), queue);
@@ -98,7 +94,7 @@ public abstract class Module {
      * @param event
      * @param name
      */
-    protected void summonByName(GuildMessageReceivedEvent event, MasterQueue queue, String name) {
+    protected void summonByName(GuildMessageReceivedEvent event, Queue queue, String name) {
         if(event.getGuild().getVoiceChannels() == null || event.getGuild().getVoiceChannels().size() == 0) return;
         for(VoiceChannel vc : event.getGuild().getVoiceChannels()) {
             if(vc.getName().equalsIgnoreCase(name)){
@@ -114,7 +110,7 @@ public abstract class Module {
      * Summons the bot to the specified channel
      * @param channel
      */
-    private void summon(VoiceChannel channel, MasterQueue queue) {
+    private void summon(VoiceChannel channel, Queue queue) {
         AudioManager manager = channel.getGuild().getAudioManager();
         manager.setSendingHandler(new AudioPlayerSendHandler(queue.getPlayer()));
         manager.setReceivingHandler(new AudioPlayerReceiveHandler());

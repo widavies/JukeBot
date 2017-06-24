@@ -1,4 +1,4 @@
-package files;
+package models;
 
 /**
  * Created by Will Davies on 6/6/2017.

@@ -1,0 +1,25 @@
+```Markdown
+#General
+    • !clear <textchannel> <user> - removes all messages from that user in the last 20 minutes
+    • !cleanup - removes all messages from the bot
+#Music
+    • add <url> - add a YouTube, SoundCloud, Twitch Stream, etc. to the queue. Available for everybody
+    • play - starts playing music. Available for everybody
+    • skip - skips to the next song
+    • back - goes to the previous song
+    • stop - stops the music
+    • pause - pauses the music
+    • resume - resumes the music
+    • !vol <#> - set the volume 1-100
+    • !playnow <url> - inserts the song into the current position in the queue and plays it
+    • !summon - brings the bot to the current channel, if not in a channel, then Radio
+    • !summon <name> - summons the bot to the specified voice channel
+    #PLAYLISTS
+    • !pcreate <name> <spotify-url> - converts a Spotify playlist to a YouTube playlist and saves it to the disk
+    • !pcreate <name> q - creates a playlist from the songs in the queue and saves it to the disk
+    • !pcreate <name> - creates an empty playlist and saves it to the disk
+    • !p <name> - plays the specified playlist
+    • !p <name> add <url> - adds a song to the specified playlist and saves it to the disk
+    • !p del <name> - deletes the current playlist from the disk
+    • !ls - lists the playlists being stored locally
+```

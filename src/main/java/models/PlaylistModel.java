@@ -1,6 +1,6 @@
-package files;
+package models;
 
-import music.Track;
+import modules.music.Track;
 
 import java.io.Serializable;
 import java.util.ArrayList;

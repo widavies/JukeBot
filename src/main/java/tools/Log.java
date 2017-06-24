@@ -1,4 +1,4 @@
-package logging;
+package tools;
 
 public class Log {
 
