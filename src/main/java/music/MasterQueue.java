@@ -15,6 +15,7 @@ import logging.Log;
 
 import javax.swing.plaf.basic.BasicSliderUI;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /*
  * This class manages the currently playing queue.
@@ -121,7 +122,20 @@ public class MasterQueue {
 
         @Override
         public void playlistLoaded(AudioPlaylist playlist) {
+            // Remove playlist "audio tracks"
+            for(int i = 0; i < tracks.size(); i++) {
+                if(tracks.get(i).getIdentifier().contains("playlist")) {
+                    tracks.remove(i);
+                    i = 0;
+                }
+            }
 
+            // Loaded playlist
+            ArrayList<Track> temp = new ArrayList<>();
+            for(AudioTrack track : playlist.getTracks()) temp.add(new Track(track.getIdentifier()));
+            Collections.shuffle(temp);
+            tracks.addAll(temp);
+            play();
         }
 
         @Override

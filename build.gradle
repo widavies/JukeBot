@@ -7,14 +7,18 @@ sourceCompatibility = 1.8
 
 repositories {
     jcenter()
+    mavenLocal()
     maven {
         url "http://uk.maven.org/maven2"
     }
+    maven { url  "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.13'
     compile 'net.dv8tion:JDA:3.1.0_204'
     compile 'com.sedmelluq:lavaplayer:1.2.39'
+    compile group: 'edu.cmu.sphinx', name: 'sphinx4-core',  version:'5prealpha-SNAPSHOT'
+    compile group: 'edu.cmu.sphinx', name: 'sphinx4-data',  version:'5prealpha-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

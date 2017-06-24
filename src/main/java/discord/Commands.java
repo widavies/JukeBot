@@ -1,9 +1,14 @@
 package discord;
 
+import edu.cmu.sphinx.api.Configuration;
+import edu.cmu.sphinx.api.LiveSpeechRecognizer;
+import edu.cmu.sphinx.api.SpeechResult;
+import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import files.IO;
 import files.Loader;
 import files.PlaylistModel;
 import files.Settings;
+import music.AudioPlayerReceiveHandler;
 import music.AudioPlayerSendHandler;
 import music.MasterQueue;
 import music.Track;
@@ -28,9 +33,21 @@ import java.util.function.Consumer;
 public class Commands extends ListenerAdapter {
 
     private MasterQueue queue;
+    private LiveSpeechRecognizer recongizer;
+
 
     public Commands() {
         queue = new MasterQueue();
+        Configuration configuration = new Configuration();
+        configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+        configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+        configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
+
+        try {
+            recongizer = new LiveSpeechRecognizer(configuration);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -51,6 +68,14 @@ public class Commands extends ListenerAdapter {
                 queue.add(new Track(message.split("\\s+")[1]));
                 sendMessage(event, "Added song to queue. There are now "+queue.getSongsInQueue()+" songs in the queue.");
             }
+            else if(message.startsWith("!l")) {
+                System.out.println("Listening...");
+                recongizer.startRecognition(true);
+                SpeechResult result = recongizer.getResult();
+                recongizer.stopRecognition();
+
+                System.out.println("Prediction: "+result.getHypothesis());
+            }
             else if(message.equals("!play")) {
                 if(queue.getSongsInQueue() == 0) {
                     sendMessage(event, "There aren't any songs in the queue");
@@ -58,7 +83,7 @@ public class Commands extends ListenerAdapter {
                 }
                 VoiceChannel channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
                 if(channel != null) summon(channel);
-                else summon(event.getGuild().getVoiceChannelById("radio"));
+                else summon(event.getGuild().getVoiceChannelsByName("radio", true).get(0));
                 queue.play();
             }
 
@@ -157,6 +182,7 @@ public class Commands extends ListenerAdapter {
     public void summon(VoiceChannel channel) {
         AudioManager manager = channel.getGuild().getAudioManager();
         manager.setSendingHandler(new AudioPlayerSendHandler(queue.getPlayer()));
+        manager.setReceivingHandler(new AudioPlayerReceiveHandler());
         manager.openAudioConnection(channel);
     }
 
