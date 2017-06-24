@@ -1,6 +1,8 @@
 package modules;
 
 import music.AudioPlayerReceiveHandler;
+import music.AudioPlayerSendHandler;
+import music.MasterQueue;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.Role;
@@ -85,10 +87,10 @@ public abstract class Module {
      *
      * @param event
      */
-    protected void smartSummon(GuildMessageReceivedEvent event) {
+    protected void smartSummon(GuildMessageReceivedEvent event, MasterQueue queue) {
         VoiceChannel channel = event.getGuild().getMember(event.getAuthor()).getVoiceState().getChannel();
-        if(channel != null) summon(channel);
-        else summon(event.getGuild().getVoiceChannelsByName("radio", true).get(0));
+        if(channel != null) summon(channel, queue);
+        else summon(event.getGuild().getVoiceChannelsByName("radio", true).get(0), queue);
     }
 
     /**
@@ -96,11 +98,11 @@ public abstract class Module {
      * @param event
      * @param name
      */
-    protected void summonByName(GuildMessageReceivedEvent event, String name) {
+    protected void summonByName(GuildMessageReceivedEvent event, MasterQueue queue, String name) {
         if(event.getGuild().getVoiceChannels() == null || event.getGuild().getVoiceChannels().size() == 0) return;
         for(VoiceChannel vc : event.getGuild().getVoiceChannels()) {
             if(vc.getName().equalsIgnoreCase(name)){
-                summon(vc);
+                summon(vc, queue);
                 reply(event, "Connecting to voice channel: "+name+".", true);
                 return;
             }
@@ -112,8 +114,9 @@ public abstract class Module {
      * Summons the bot to the specified channel
      * @param channel
      */
-    private void summon(VoiceChannel channel) {
+    private void summon(VoiceChannel channel, MasterQueue queue) {
         AudioManager manager = channel.getGuild().getAudioManager();
+        manager.setSendingHandler(new AudioPlayerSendHandler(queue.getPlayer()));
         manager.setReceivingHandler(new AudioPlayerReceiveHandler());
         manager.openAudioConnection(channel);
     }

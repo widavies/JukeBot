@@ -66,6 +66,7 @@ public class MasterQueue {
 
     // Gets the number of songs in the queue
     public int getSongsInQueue() {
+        if(tracks == null) return 0;
         return this.tracks.size();
     }
 
