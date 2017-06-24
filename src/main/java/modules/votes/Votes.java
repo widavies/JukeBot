@@ -41,6 +41,7 @@ public class Votes extends Module {
             poll.items.get(vote - 1).upvote();
             poll.voters.add(event.getAuthor().getId());
             reply(event, event.getAuthor().getName()+"'s vote has been recorded.", true);
+            Log.logError("User ["+event.getAuthor().getName()+"] voted for item # "+(vote - 1)+".");
         }
 
         if(getRole(event) < MOD) return false;
@@ -56,11 +57,13 @@ public class Votes extends Module {
                     else voteString += (i + 1) + ") "+ tokens[i + 2] +"\n";
                 }
                 reply(event, "@everyone "+event.getAuthor().getName()+" opened poll \""+tokens[1]+"\"\n"+voteString+"\n*Vote with !v #*", true);
+                Log.logError("User ["+event.getAuthor().getName()+"] opened a poll.");
                 return true;
             }
             else if(message.startsWith("!close")) {
                 if(poll != null) poll.open = false;
                 reply(event, "Poll closed", true);
+                Log.logError("User ["+event.getAuthor().getName()+"] closed a poll.");
                 return true;
             }
             else if(message.startsWith("!results")) {
@@ -75,9 +78,11 @@ public class Votes extends Module {
                         }
                     } else return true;
                     reply(event, response, true);
+                    Log.logError("User ["+event.getAuthor().getName()+"] closed a poll and displayed results.");
                     return true;
                 } else {
                     reply(event, "Couldn't get results, no poll found.", true);
+                    Log.log("User ["+event.getAuthor().getName()+"] tried to get results from an empty poll.");
                     return true;
                 }
             }

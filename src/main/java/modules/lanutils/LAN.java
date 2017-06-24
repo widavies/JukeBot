@@ -215,7 +215,8 @@ public class LAN extends Module {
 
         } catch(Exception e) {
             reply(event, "Incorrect syntax. Type !help for help.", true);
-            Log.logError("User ["+event.getAuthor().getName()+"] issued an incorrect command: "+message);
+
+            Log.logError("User ["+event.getAuthor().getName()+"] issued an incorrect command: "+message+" Error message: "+e.getMessage());
             return false;
         }
 
