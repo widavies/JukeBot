@@ -108,6 +108,10 @@ public class MasterQueue {
         manager.loadItem(tracks.get(current).getIdentifier(), new TrackLoadListener());
     }
 
+    public int getVolume() {
+        return player.getVolume();
+    }
+
     public AudioPlayer getPlayer() {
         return player;
     }

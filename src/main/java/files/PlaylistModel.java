@@ -26,4 +26,8 @@ public class PlaylistModel implements Serializable {
         return tracks;
     }
 
+    public void addTrack(Track track) {
+        tracks.add(track);
+    }
+
 }
