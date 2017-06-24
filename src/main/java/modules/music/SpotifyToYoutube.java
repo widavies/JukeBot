@@ -17,6 +17,7 @@ import com.wrapper.spotify.models.ClientCredentials;
 import com.wrapper.spotify.models.Playlist;
 import com.wrapper.spotify.models.PlaylistTrack;
 import tools.Constants;
+import tools.Log;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,7 +46,6 @@ public class SpotifyToYoutube {
             final PlaylistRequest request2 = api.getPlaylist(URL.split("/")[4], URL.split("/")[6]).build();
             final Playlist playlist = request2.get();
 
-
             ArrayList<Track> tracks = new ArrayList<>();
 
             // Search YouTube for a similar tracks
@@ -57,14 +57,15 @@ public class SpotifyToYoutube {
             search.setMaxResults((long)1);
 
             for(PlaylistTrack t : playlist.getTracks().getItems()) {
-                search.setQ(t.getTrack().getName());
+                search.setQ(t.getTrack().getName()+" "+t.getTrack().getArtists().get(0).getName());
                 SearchListResponse searchListResponse = search.execute();
                 List<SearchResult> result = searchListResponse.getItems();
+                if(result == null || result.size() == 0) continue;
                 tracks.add(new Track("https://www.youtube.com/watch?v="+getID(result.iterator())));
             }
             return tracks;
         } catch(Exception e) {
-            System.err.println("An error occured while trying to process Spotify playlist");
+            Log.log("Converter failed with error message: "+e.getMessage());
         }
         return null;
     }

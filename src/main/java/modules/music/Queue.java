@@ -62,6 +62,12 @@ public class Queue {
         this.tracks.add(current + 1, track);
     }
 
+    public void shuffle() {
+        player.stopTrack();
+        if(tracks != null && tracks.size() > 0) Collections.shuffle(tracks);
+        play();
+    }
+
     // Gets the number of songs in the queue
     public int getSongsInQueue() {
         if(tracks == null) return 0;
@@ -119,7 +125,7 @@ public class Queue {
     private class TrackLoadListener implements AudioLoadResultHandler {
         @Override
         public void trackLoaded(AudioTrack track) {
-            Log.log("Loaded track");
+            Log.log("Loaded track "+track.getIdentifier()+" successfully.");
             player.playTrack(track);
         }
 

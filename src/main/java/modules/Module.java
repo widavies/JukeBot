@@ -18,9 +18,19 @@ import net.dv8tion.jda.core.managers.AudioManager;
  */
 public abstract class Module {
 
+    private String displayName;
+
     protected final int DEFAULT = 1;
     protected final int MOD = 2;
     protected final int ADMIN = 3;
+
+    public Module(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 
     /**
      * Processes a command from the console.
@@ -55,6 +65,21 @@ public abstract class Module {
      */
     protected void replyPrivately(GuildMessageReceivedEvent event, String message) {
         event.getAuthor().openPrivateChannel().queue((channel) -> send(channel, message));
+        event.getMessage().delete().queue();
+    }
+
+    /**
+     * Replies privately to the specified user
+     * The command will be deleted.
+     * @param event the message receive event
+     * @param message the message to send to the user
+     */
+    protected void replyPrivatelyToUser(GuildMessageReceivedEvent event, String name, String message) {
+        try {
+            event.getGuild().getMembersByName(name, true).get(0).getUser().openPrivateChannel().queue((channel) -> send(channel, message));
+        } catch(Exception e) {
+            event.getGuild().getMembersByNickname(name, true).get(0).getUser().openPrivateChannel().queue((channel) -> send(channel, message));
+        }
         event.getMessage().delete().queue();
     }
 

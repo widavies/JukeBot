@@ -1,7 +1,13 @@
 ```Markdown
 #General
-    • !clear <textchannel> <user> - removes all messages from that user in the last 20 minutes
-    • !cleanup - removes all messages from the bot
+    • !clear <user> <#> - removes all messages from that user in the last 20 minutes, # is the amount of historical messages to check. Available for mods
+    • !cleanup - removes all messages from the bot. Available for mods
+    • !dump - sends a private message containing the bot log dump. Available for mods
+    • !addinsult,<insult> - adds the specified insult to the insult database, Note the comma!
+    • !insult <player> - insults the specified player from the database
+    • !register,title,option1,option2,etc. - registers a poll
+    • !results - displays poll results
+    • !uptime - see how long JukeBot has been running
 #Music
     • add <url> - add a YouTube, SoundCloud, Twitch Stream, etc. to the queue. Available for everybody
     • play - starts playing music. Available for everybody
@@ -10,6 +16,7 @@
     • stop - stops the music
     • pause - pauses the music
     • resume - resumes the music
+    • shuffle - shuffles the current queue
     • !vol <#> - set the volume 1-100
     • !playnow <url> - inserts the song into the current position in the queue and plays it
     • !summon - brings the bot to the current channel, if not in a channel, then Radio

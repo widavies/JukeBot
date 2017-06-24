@@ -4,7 +4,9 @@ import models.Loader;
 import models.Settings;
 import modules.Module;
 import modules.general.General;
+import modules.lanutils.LAN;
 import modules.music.Music;
+import modules.votes.Votes;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import tools.Log;
@@ -37,6 +39,10 @@ public class Main extends ListenerAdapter {
         modules = new ArrayList<>();
         modules.add(new General());
         modules.add(new Music());
+        modules.add(new LAN());
+        modules.add(new Votes());
+
+        for(Module m : modules) Log.log("Loaded module "+m.getDisplayName()+" successfully");
     }
 
     @Override
