@@ -51,7 +51,7 @@ public class Main extends ListenerAdapter {
     }
 
     public static void main(String[] args) {
-        Log.log("Starting JukeBot...");
+        Log.log("Starting JukeBot v0.1 ...");
         try {
             new JDABuilder(AccountType.BOT).setToken(Constants.DISCORD_TOKEN).addEventListener(new Main()).buildBlocking();
         } catch (InterruptedException e) {

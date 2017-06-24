@@ -46,7 +46,7 @@ public class General extends Module {
                         String help = IOUtils.toString(this.getClass().getResource("/default.txt"), "UTF-8");
                         replyPrivately(event, help);
                     }
-                    Log.logError("User ["+event.getAuthor().getName()+"] requested help file. Role: "+getRole(event)+".");
+                    Log.log("User ["+event.getAuthor().getName()+"] requested help file. Role: "+getRole(event)+".");
                 } catch(Exception e) {
                     Log.logError("Failed to load help.txt. Is it missing? Error message: "+e.getMessage());
                 }
@@ -55,16 +55,16 @@ public class General extends Module {
                 settings.addInsult(message.split(",")[1]);
                 new Loader().saveSettings(settings);
                 reply(event, "Insult added to insult database.", true);
-                Log.logError("User ["+event.getAuthor().getName()+"] add insult "+message.split(",")[1]+" to the database.");
+                Log.log("User ["+event.getAuthor().getName()+"] add insult "+message.split(",")[1]+" to the database.");
                 return true;
             } else if(message.startsWith("!insult")) {
                 replyPrivatelyToUser(event, message.split("\\s+")[1], settings.getInsult()+" - "+event.getAuthor().getName());
-                Log.logError("User ["+event.getAuthor().getName()+"] sent an insult to "+message.split("\\s+"));
+                Log.log("User ["+event.getAuthor().getName()+"] sent an insult to "+message.split("\\s+"));
                 return true;
             } else if(message.equals("!uptime")) {
                 double time = ((double)(System.currentTimeMillis() - startTime) / 1000) / 60 / 60;
                 reply(event, "JukeBot has been running for "+time+" hrs.", true);
-                Log.logError("User ["+event.getAuthor().getName()+"] request uptime, responding "+time+" hrs.");
+                Log.log("User ["+event.getAuthor().getName()+"] request uptime, responding "+time+" hrs.");
                 return true;
             }
 
@@ -79,7 +79,7 @@ public class General extends Module {
                         for(Message m : messages) { if(m.getCreationTime().isAfter(OffsetDateTime.now().minusMinutes(20)) && m.getAuthor().getName().equalsIgnoreCase(message.split("\\s+")[1])) m.delete().queue(); }
                     }
                 }
-                Log.logError("User ["+event.getAuthor().getName()+"] requested clear messages for user "+message.startsWith("\\s+")+".");
+                Log.log("User ["+event.getAuthor().getName()+"] requested clear messages for user "+message.startsWith("\\s+")+".");
             }
 
             else if(message.equals("!cleanup")) {
@@ -90,7 +90,7 @@ public class General extends Module {
                         for(Message m : messages) { if(m.getAuthor().isBot()) m.delete().queue(); }
                     }
                 }
-                Log.logError("User ["+event.getAuthor().getName()+"] requested a bot cleanup");
+                Log.log("User ["+event.getAuthor().getName()+"] requested a bot cleanup");
                 return true;
         }
         else if(message.equals("!dump")) {
