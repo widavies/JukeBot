@@ -74,13 +74,19 @@ public abstract class Module {
      * @param event the message receive event
      * @param message the message to send to the user
      */
-    protected void replyPrivatelyToUser(GuildMessageReceivedEvent event, String name, String message) {
+    protected boolean replyPrivatelyToUser(GuildMessageReceivedEvent event, String name, String message) {
+        event.getMessage().delete().queue();
         try {
             event.getGuild().getMembersByName(name, true).get(0).getUser().openPrivateChannel().queue((channel) -> send(channel, message));
+            return true;
         } catch(Exception e) {
-            event.getGuild().getMembersByNickname(name, true).get(0).getUser().openPrivateChannel().queue((channel) -> send(channel, message));
+            try {
+                event.getGuild().getMembersByNickname(name, true).get(0).getUser().openPrivateChannel().queue((channel) -> send(channel, message));
+                return true;
+            } catch(Exception ex) {
+                return false;
+            }
         }
-        event.getMessage().delete().queue();
     }
 
     private void send(MessageChannel channel, String message) {

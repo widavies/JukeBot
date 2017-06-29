@@ -59,6 +59,10 @@ public class LAN extends Module {
                 reply(event, "You're not in the match. Contact Will or Isaac to be added.", true);
                 Log.log("User ["+event.getAuthor().getName()+"] unsuccessfully used *lan");
                 return true;
+            } else {
+                Log.log("User ["+event.getAuthor().getName()+"] unsuccessfully used *lan");
+                reply(event, "There is no active match.", true);
+                return true;
             }
         }
 

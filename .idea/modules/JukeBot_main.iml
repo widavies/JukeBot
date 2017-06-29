@@ -6,12 +6,12 @@
     <content url="file://$MODULE_DIR$/../../src/main">
       <sourceFolder url="file://$MODULE_DIR$/../../src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/../../src/main" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: net.dv8tion:JDA:3.1.0_204" level="project" />
     <orderEntry type="library" name="Gradle: com.sedmelluq:lavaplayer:1.2.39" level="project" />
+    <orderEntry type="library" name="Gradle: ie.corballis:sox-java:1.0.1" level="project" />
     <orderEntry type="library" name="Gradle: edu.cmu.sphinx:sphinx4-core:5prealpha-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: edu.cmu.sphinx:sphinx4-data:5prealpha-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: se.michaelthelin.spotify:spotify-web-api-java:1.5.0" level="project" />

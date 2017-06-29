@@ -36,7 +36,7 @@ public class Music extends Module {
                 reply(event, reply, true);
                 Log.log("User ["+event.getAuthor().getName()+"] added ["+message.split("\\s+")[1]+"] to the current playlist.");
                 return true;
-            } else if (message.equals("play") && (getRole(event) >= MOD || queue.getSongsInQueue() == 0)) {
+            } else if (message.equals("play") && (getRole(event) >= MOD || !queue.isAlreadyPlaying())) {
                 if(queue.getSongsInQueue() == 0) {
                     reply(event, "There aren't any songs in the queue. :(", true);
                     return true;
@@ -81,7 +81,7 @@ public class Music extends Module {
                 reply(event, "Resuming tunes...", true);
                 Log.log("User ["+event.getAuthor().getName()+"] issued command: resume");
                 return true;
-            } else if (message.startsWith("!vol")) {
+            } else if (message.startsWith("!level")) {
                 int temp = queue.getVolume();
                 queue.setVolume(Integer.parseInt(message.split("\\s+")[1]));
                 reply(event, "Volume changed from "+temp+" to "+queue.getVolume(), true);
@@ -91,13 +91,14 @@ public class Music extends Module {
                 queue.addNext(new Track(message.split("\\s+")[1]));
                 queue.skip();
                 Log.log("User ["+event.getAuthor().getName()+"] issued command: playnow with url: "+message.split("\\s+")[1]);
+                reply(event, "Playing song now.", true);
                 return true;
             } else if(message.startsWith("!summon")) {
                 if(message.split("\\s+").length == 2) {
-                    summonByName(event, queue, message.split("\\s+")[1]);
+                    summonByName(event, queue, message.split(",")[1]);
                     return true;
                 }
-                else if(message.split("\\s+").length == 1) {
+                else if(message.split(",").length == 1) {
                     smartSummon(event, queue);
                     return true;
                 }
@@ -127,7 +128,7 @@ public class Music extends Module {
                     return true;
                 } else if (tokens.length == 2) { // creating blank playlist
                     settings.addPlaylist(tokens[1], new ArrayList<>());
-                    reply(event, "Created playlist: " + tokens[1] + ". Use !p <name> add <url> to start adding songs.", true);
+                    reply(event, "Created playlist " + tokens[1] + ". Use !p <name> add <url> to start adding songs.", true);
                     new Loader().saveSettings(settings);
                     Log.log("User ["+event.getAuthor().getName()+"] created an empty playlist, "+tokens[1]+".");
                     return true;
@@ -166,15 +167,15 @@ public class Music extends Module {
                     Log.log("User ["+event.getAuthor().getName()+"] started playlist "+tokens[1]+".");
                     return true;
                 }
-                else if (tokens.length == 3 && tokens[2].equals("del")) {
+                else if (tokens.length == 3 && tokens[1].equals("del")) {
                     PlaylistModel pm = settings.getPlaylist(tokens[2]);
                     if (pm == null) {
-                        reply(event, "Playlist " + tokens[1] + " does not exist.", true);
+                        reply(event, "Playlist " + tokens[2] + " does not exist.", true);
                         return true;
                     }
                     settings.remove(pm);
                     new Loader().saveSettings(settings);
-                    reply(event, "Playlist " + tokens[1] + " was deleted.", true);
+                    reply(event, "Playlist " + tokens[2] + " was deleted.", true);
                     Log.log("User ["+event.getAuthor().getName()+"] delete playlist "+tokens[2]+".");
                     return true;
                 }

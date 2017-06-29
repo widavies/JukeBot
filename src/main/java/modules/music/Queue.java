@@ -48,6 +48,10 @@ public class Queue {
         player.setVolume(volume);
     }
 
+    public boolean isAlreadyPlaying() {
+        return player.isPaused() || player.getPlayingTrack() != null;
+    }
+
     // Adds the track to the end of the queue
     public void add(Track track) {
         this.tracks.add(track);

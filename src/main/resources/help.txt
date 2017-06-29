@@ -1,12 +1,26 @@
+:DEFAULT:
 ```Markdown
 #General
-    • !clear <user> <#> - removes all messages from that user in the last 20 minutes, # is the amount of historical messages to check. Available for mods
-    • !cleanup - removes all messages from the bot. Available for mods
-    • !dump - sends a private message containing the bot log dump. Available for mods
+    • *lan - gets info about the active lan match
+    • !v <#> - used to vote in polls
+    • !ping - pong!
+    • !help - get help commands
     • !addinsult,<insult> - adds the specified insult to the insult database, Note the comma!
     • !insult <player> - insults the specified player from the database
-    • !register,title,option1,option2,etc. - registers a poll
-    • !results - displays poll results
+    • !uptime - see how long JukeBot has been running
+#Music
+    • add <url> - add a YouTube, SoundCloud, Twitch Stream, etc. to the queue.
+    • play - plays the queue if it's not currently playing
+```
+:MOD:
+```Markdown
+#General
+    • *lan - gets info about the active lan match
+    • !v <#> - used to vote in polls
+    • !ping - pong!
+    • !help - get help commands
+    • !addinsult,<insult> - adds the specified insult to the insult database, Note the comma!
+    • !insult <player> - insults the specified player from the database
     • !uptime - see how long JukeBot has been running
 #Music
     • add <url> - add a YouTube, SoundCloud, Twitch Stream, etc. to the queue. Available for everybody
@@ -17,7 +31,7 @@
     • pause - pauses the music
     • resume - resumes the music
     • shuffle - shuffles the current queue
-    • !vol <#> - set the volume 1-100
+    • !level <#> - set the volume 1-100
     • !playnow <url> - inserts the song into the current position in the queue and plays it
     • !summon - brings the bot to the current channel, if not in a channel, then Radio
     • !summon <name> - summons the bot to the specified voice channel
@@ -29,4 +43,96 @@
     • !p <name> add <url> - adds a song to the specified playlist and saves it to the disk
     • !p del <name> - deletes the current playlist from the disk
     • !ls - lists the playlists being stored locally
+#Other
+    • !register,title,option1,option2,etc. - registers a poll
+    • !results - displays poll results
+    • !clean <user> - removes all messages from this user in all text channels from the last 20 minutes
+    • !cleanup - removes some bot messages from all text channels
+    • !dump - receive a copy of the bot log file
+```
+:ADMIN1:
+```Markdown
+#General
+    • !clear <#> - removes the specified amount of messages from the current text channel.
+    • !cleanup - removes all messages from the bot.
+    • !dump - sends a private message containing the bot log dump.
+    • !addinsult,<insult> - adds the specified insult to the insult database, Note the comma!
+    • !insult <player> - insults the specified player from the database
+    • !register,title,option1,option2,etc. - registers a poll
+    • !results - displays poll results
+    • !uptime - see how long JukeBot has been running
+#Music
+    • add <url> - add a YouTube, SoundCloud, Twitch Stream, etc. to the queue.
+    • play - starts playing music.
+    • skip - skips to the next song
+    • back - goes to the previous song
+    • stop - stops the music
+    • pause - pauses the music
+    • resume - resumes the music
+    • shuffle - shuffles the current queue
+    • !level <#> - set the volume 1-100
+    • !playnow <url> - inserts the song into the current position in the queue and plays it
+    • !summon - brings the bot to the current channel, if not in a channel, then Radio
+    • !summon <name> - summons the bot to the specified voice channel
+    #PLAYLISTS
+    • !pcreate <name> <spotify-url> - converts a Spotify playlist to a YouTube playlist and saves it to the disk
+    • !pcreate <name> q - creates a playlist from the songs in the queue and saves it to the disk
+    • !pcreate <name> - creates an empty playlist and saves it to the disk
+    • !p <name> - plays the specified playlist
+    • !p <name> add <url> - adds a song to the specified playlist and saves it to the disk
+    • !p del <name> - deletes the current playlist from the disk
+    • !ls - lists the playlists being stored locally
+```
+:ADMIN2:
+```Markdown
+#Lan-utils
+    • *lan - use this command to figure out what team you're on
+    • *tol <#> - sets the maximum skill difference between teams
+    • *setip <string> - sets the connection command that will be sent to each user
+    • *game <string> - sets the current game, if ensure of what games are marked as in database, use *ls
+    • *add <player> - adds the specified player to the queue
+    • *clear - clears the queue
+    • *qls - lists the players currently in the queue
+    • *find or *find <#> - finds a match, use optional parameter <#> to specify number of matches to find, default is 1
+    • *choose <#> - sets the specified match as the active match
+    • *ls - lists database entries
+    • *dat add <name> <game> <skill 1-1000> - adds the player to the database
+    • *end - resets the module
+```
+:SSH:
+```Markdown
+#How to SSH into CPJD-Server
+    • Ask Will for private key file (required for authentication)
+    • Install PuTTY (http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html)
+    • Click session, under host name, type cpjd.zapto.org if not at Will's house, and cpjd if at Will's house
+    • Under Connection > SSH > Auth > Select private key file
+    • Under Connection > Data > Fill cpjd in for Auto-login username
+    • Under session, make sure to save the profile so you can easily load it again
+    • Click open
+    • A terminal will open and ask for a passphrase, the passphrase is Underpressure$1000
+    • You're in!
+#SSH Commands
+    • Use htop command to manage and kill running processes, before starting a new process, please kill the old one
+    • Right click on Putty window and click Duplicate Session to open another terminal
+    • Note: Services that are started from PUTTY will terminate when the window is closed
+#Starting the JukeBot
+    • cd ~/Desktop/JukeBot
+    • ./start.sh
+#Starting the Minecraft servers
+    • cd ~/Desktop/MC_Server/Bungee
+    • ./start.sh
+    • cd ~/Desktop/MC_Server/Hub
+    • ./start.sh
+    • cd ~/Desktop/MC_Server/Survival
+    • ./start.sh
+#Starting NOIP DUC Service (keeps cpjd.zapto.org synced with dynamic IP, very important!)
+    • cd /usr/local/src/noip-2.1.9-1
+    • sudo make install
+#Starting CSGO server remotely (note, CSGO server is on it's own account for security reasons)
+    • cd /home/steam/csgo
+    • steamcmd
+    • force_install_dir csgo
+    • login anonymous
+    • app_update 740 validate
+    • app_update 740 if only update
 ```

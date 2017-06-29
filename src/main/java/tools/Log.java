@@ -27,7 +27,11 @@ public class Log {
     }
 
     public static void logError(String message) {
-        System.err.println("[JukeBot] [Error] "+message);
+        messages.add("[JukeBot] [ERROR] ["+convertTime(System.currentTimeMillis())+"] [*] "+message);
+        if(messages.size() > MESSAGES_TO_KEEP) {
+            messages.remove(0);
+        }
+        System.err.println(messages.get(messages.size() - 1));
 
     }
 
@@ -36,7 +40,6 @@ public class Log {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy h:mm a", Locale.getDefault());
         Date resultdate = new Date(timeMillis);
         return sdf.format(resultdate);
-
     }
 
 
