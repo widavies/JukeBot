@@ -32,7 +32,7 @@ public class Queue {
     private ArrayList<Track> tracks;
 
     // The currently playing track index
-    private int current;
+    public int current;
 
     public Queue() {
         tracks = new ArrayList<>();
@@ -109,6 +109,10 @@ public class Queue {
         player.stopTrack();
         current++;
         play();
+    }
+
+    public int getCurrent() {
+        return current;
     }
 
     // Starts playing music at index current

@@ -47,7 +47,13 @@ public class Main extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        for(Module m : modules) m.processCommand(event);
+        for(Module m : modules) {
+            if(event.getChannel().getName().equalsIgnoreCase("importantvideos") && !event.getMessage().getRawContent().startsWith("https://www.youtube.com")) {
+                event.getMessage().delete().queue();
+                return;
+            }
+            m.processCommand(event);
+        }
     }
 
     public static void main(String[] args) {

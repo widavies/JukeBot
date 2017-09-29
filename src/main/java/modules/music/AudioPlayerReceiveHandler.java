@@ -66,7 +66,7 @@ public class AudioPlayerReceiveHandler implements AudioReceiveHandler {
 
     @Override
     public boolean canReceiveCombined() {
-        return true;
+        return false;
     }
 
     @Override

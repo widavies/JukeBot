@@ -4,10 +4,14 @@ import models.Loader;
 import models.PlaylistModel;
 import models.Settings;
 import modules.Module;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageHistory;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import tools.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Manages commands and music playing for JukeBot.
@@ -122,6 +126,24 @@ public class Music extends Module {
                 Log.log("User ["+event.getAuthor().getName()+"] issued command: ls");
                 return true;
             }
+            else if(message.startsWith("!song?")) {
+                Log.log("User ["+event.getAuthor()+" issued command: !song?");
+                reply(event, "Song: "+queue.getTracks().get(queue.getCurrent()).getIdentifier(), true);
+            }
+            else if(message.startsWith("!search")) {
+                smartSummon(event, queue);
+                Log.log("User ["+event.getAuthor().getName()+"] is searching YouTube with query: "+event.getMessage().getContent().substring(6));
+
+                Track track = new SpotifyToYoutube().search(event.getMessage().getContent().substring(6));
+                if(track == null) {
+                    reply(event, "An error occurred when searching for the song. Check syntax?", true);
+                    return true;
+                } else {
+                    queue.addNext(track);
+                        queue.skip();
+                    reply(event, "Found track, playing now...", true);
+                }
+            }
             else if (message.startsWith("!pcreate")) {
                 if (tokens.length == 1) {
                     reply(event, "You must specify a playlist name.", true);
@@ -152,6 +174,26 @@ public class Music extends Module {
                     Log.log("User ["+event.getAuthor().getName()+"] created playlist "+tokens+" from the current queue.");
                     return true;
                 }
+            } else if(message.startsWith("!iv")) {
+                // Get a list of URLs
+                TextChannel tc = event.getGuild().getTextChannelsByName("importantvideos", true).get(0);
+                MessageHistory history = new MessageHistory(tc);
+                List<Message> messages = history.retrievePast(100).complete();
+                if(message.length() == 0) {
+                    reply(event, "No videos found in text channel", true);
+                    return true;
+                }
+                ArrayList<Track> temp = new ArrayList<>();
+                if(messages != null && message.length() > 0) {
+                    for(Message m : messages) { temp.add(new Track(m.getRawContent())); }
+                }
+                queue.clear();
+                smartSummon(event, queue);
+                for (Track t : temp) queue.add(t);
+                queue.play();
+                reply(event, "Playing #importantvideos...", true);
+                Log.log("User ["+event.getAuthor().getName()+"] started the important videos playlist.");
+                return true;
             } else if (message.startsWith("!p ")) {
                 if (tokens.length == 2) {
                     PlaylistModel pm = settings.getPlaylist(tokens[1]);

@@ -25,6 +25,30 @@ import java.util.List;
 
 public class SpotifyToYoutube {
 
+    public Track search(String query) {
+        try {
+            final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+            final JsonFactory JSON_FACTORY = new JacksonFactory();
+
+            // Search YouTube for a similar tracks
+            YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, request1 -> {
+            }).setApplicationName("JukeBot").build();
+            YouTube.Search.List search = youtube.search().list("id,snippet");
+            search.setKey(Constants.YOUTUBE_API_KEY);
+            search.setType("video");
+            search.setMaxResults((long)1);
+            search.setQ(query);
+            SearchListResponse searchListResponse = search.execute();
+            List<SearchResult> result = searchListResponse.getItems();
+            return new Track("https://www.youtube.com/watch?v="+getID(result.iterator()));
+
+        } catch(Exception e) {
+            Log.log("Converter failed with error message: "+e.getMessage());
+        }
+        return null;
+
+    }
+
     public ArrayList<Track> convert(String URL) {
         final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
         final JsonFactory JSON_FACTORY = new JacksonFactory();

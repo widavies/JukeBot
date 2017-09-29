@@ -10,8 +10,11 @@ import modules.Module;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -38,11 +41,15 @@ public class General extends Module {
                 try {
                     File currentDir = new File(General.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
                     File f1 = new File(currentDir.getParentFile().getAbsoluteFile() + "/help.txt");
-                    String[] help = IOUtils.toString(new FileInputStream(f1), "UTF-8").split(":");
+                    String[] help = IOUtils.toString(new FileInputStream(f1), "UTF-8").split("╡");
                     if(getRole(event) == ADMIN) {
-                        replyPrivately(event, help[6]);
                         replyPrivately(event, help[8]);
-                    } else if(getRole(event) == MOD) replyPrivately(event, help[4]);
+                        replyPrivately(event, help[10]);
+                    } else if(getRole(event) == MOD) {
+                        replyPrivately(event, help[4]);
+                        replyPrivately(event, help[6]);
+
+                    }
                      else replyPrivately(event, help[2]);
 
 
@@ -73,16 +80,23 @@ public class General extends Module {
             }
 
             if(getRole(event) < MOD) return false;
+            if(message.startsWith("!ip")) {
+                URL whatismyip = new URL("http://checkip.amazonaws.com");
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        whatismyip.openStream()));
 
-            if(message.startsWith("!clear")) {
+                String ip = in.readLine(); //you get the IP as a String
+                replyPrivately(event, "CPJD Server Public IP Address: "+ip);
+            }
+            else if(message.startsWith("!clear")) {
                 TextChannel tc = event.getMessage().getTextChannel();
                     MessageHistory history = new MessageHistory(tc);
-                    List<Message> messages = history.retrievePast(Integer.parseInt(message.split("\\s+")[1])).complete();
+                    List<Message> messages = history.retrievePast(Integer.parseInt(message.split("\\s+")[1] + 1)).complete();
                     if(messages != null && message.length() > 0) {
                         for(Message m : messages) { m.delete().queue(); }
                     }
                 event.getMessage().delete();
-                Log.log("User ["+event.getAuthor().getName()+"] requested to clear "+message.split("\\s+")[1]+" messages from text channel "+tc.getName()+".");
+                Log.log("User ["+event.getAuthor().getName()+"] requested to clear "+(Integer.parseInt(message.split("\\s+")[1]) + 1)+" messages from text channel "+tc.getName()+".");
             }
 
             else if(message.equals("!cleanup")) {
@@ -93,7 +107,7 @@ public class General extends Module {
                         for(Message m : messages) { if(m.getAuthor().isBot()) m.delete().queue(); }
                     }
                 }
-                event.getMessage().delete();
+                event.getMessage().delete().queue();
                 Log.log("User ["+event.getAuthor().getName()+"] requested a bot cleanup");
                 return true;
         }

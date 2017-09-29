@@ -1,4 +1,4 @@
-:DEFAULT:
+﻿+DEFAULT+
 ```Markdown
 #General
     • *lan - gets info about the active lan match
@@ -12,7 +12,7 @@
     • add <url> - add a YouTube, SoundCloud, Twitch Stream, etc. to the queue.
     • play - plays the queue if it's not currently playing
 ```
-:MOD:
++MOD+
 ```Markdown
 #General
     • *lan - gets info about the active lan match
@@ -29,6 +29,8 @@
     • back - goes to the previous song
     • stop - stops the music
     • pause - pauses the music
+    • !search <query> - search YouTube and plays the closest match
+    • !song? - returns the link to the current song
     • resume - resumes the music
     • shuffle - shuffles the current queue
     • !level <#> - set the volume 1-100
@@ -50,7 +52,7 @@
     • !cleanup - removes some bot messages from all text channels
     • !dump - receive a copy of the bot log file
 ```
-:ADMIN1:
++ADMIN1+
 ```Markdown
 #General
     • !clear <#> - removes the specified amount of messages from the current text channel.
@@ -70,6 +72,8 @@
     • pause - pauses the music
     • resume - resumes the music
     • shuffle - shuffles the current queue
+    • !search <query> - search YouTube and plays the closest match
+    • !song? - returns the link to the current song
     • !level <#> - set the volume 1-100
     • !playnow <url> - inserts the song into the current position in the queue and plays it
     • !summon - brings the bot to the current channel, if not in a channel, then Radio
@@ -83,7 +87,7 @@
     • !p del <name> - deletes the current playlist from the disk
     • !ls - lists the playlists being stored locally
 ```
-:ADMIN2:
++ADMIN2+
 ```Markdown
 #Lan-utils
     • *lan - use this command to figure out what team you're on
@@ -98,41 +102,4 @@
     • *ls - lists database entries
     • *dat add <name> <game> <skill 1-1000> - adds the player to the database
     • *end - resets the module
-```
-:SSH:
-```Markdown
-#How to SSH into CPJD-Server
-    • Ask Will for private key file (required for authentication)
-    • Install PuTTY (http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html)
-    • Click session, under host name, type cpjd.zapto.org if not at Will's house, and cpjd if at Will's house
-    • Under Connection > SSH > Auth > Select private key file
-    • Under Connection > Data > Fill cpjd in for Auto-login username
-    • Under session, make sure to save the profile so you can easily load it again
-    • Click open
-    • A terminal will open and ask for a passphrase, the passphrase is Underpressure$1000
-    • You're in!
-#SSH Commands
-    • Use htop command to manage and kill running processes, before starting a new process, please kill the old one
-    • Right click on Putty window and click Duplicate Session to open another terminal
-    • Note: Services that are started from PUTTY will terminate when the window is closed
-#Starting the JukeBot
-    • cd ~/Desktop/JukeBot
-    • ./start.sh
-#Starting the Minecraft servers
-    • cd ~/Desktop/MC_Server/Bungee
-    • ./start.sh
-    • cd ~/Desktop/MC_Server/Hub
-    • ./start.sh
-    • cd ~/Desktop/MC_Server/Survival
-    • ./start.sh
-#Starting NOIP DUC Service (keeps cpjd.zapto.org synced with dynamic IP, very important!)
-    • cd /usr/local/src/noip-2.1.9-1
-    • sudo make install
-#Starting CSGO server remotely (note, CSGO server is on it's own account for security reasons)
-    • cd /home/steam/csgo
-    • steamcmd
-    • force_install_dir csgo
-    • login anonymous
-    • app_update 740 validate
-    • app_update 740 if only update
 ```
