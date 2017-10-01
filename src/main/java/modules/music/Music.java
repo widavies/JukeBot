@@ -85,7 +85,7 @@ public class Music extends Module {
                 reply(event, "Resuming tunes...", true);
                 Log.log("User ["+event.getAuthor().getName()+"] issued command: resume");
                 return true;
-            } else if (message.startsWith("!volume")) {
+            } else if (message.startsWith("!volume") || message.startsWith("!vol")) {
                 int temp = queue.getVolume();
                 queue.setVolume(Integer.parseInt(message.split("\\s+")[1]));
                 reply(event, "Volume changed from "+temp+" to "+queue.getVolume(), true);
