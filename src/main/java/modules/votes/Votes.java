@@ -19,7 +19,7 @@ public class Votes extends Module {
         String message = event.getMessage().getRawContent();
         String[] tokens = message.split(",");
 
-        if(message.startsWith("!v")) {
+        if(message.startsWith("!cast")) {
             if(poll == null || !poll.open) {
                 reply(event, "There aren't any open polls right now. :(", true);
                 return true;
@@ -56,7 +56,7 @@ public class Votes extends Module {
                     if(i == tokens.length - 1) voteString += (i + 1) + ") "+ tokens[i + 2] +"\n";
                     else voteString += (i + 1) + ") "+ tokens[i + 2] +"\n";
                 }
-                reply(event, "@everyone "+event.getAuthor().getName()+" opened poll \""+tokens[1]+"\"\n"+voteString+"\n*Vote with !v #*", true);
+                reply(event, "@everyone "+event.getAuthor().getName()+" opened poll \""+tokens[1]+"\"\n"+voteString+"\n*Vote with !cast <#>*", true);
                 Log.log("User ["+event.getAuthor().getName()+"] opened a poll.");
                 return true;
             }
@@ -71,10 +71,10 @@ public class Votes extends Module {
                     poll.open = false;
                     String response = "Results of poll \""+poll.title+"\""+"\n";
                     if(poll.getWinner(event) != null) {
-                        response += poll.getWinner(event).name + " was the winner with "+poll.getWinner(event).votes+" votes";
+                        response += poll.getWinner(event).name.substring(3) + " was the winner with "+poll.getWinner(event).votes+" votes";
                         for(Item i : poll.items) {
                             if(i.name.equals(poll.getWinner(event).name)) continue;
-                            response += "\n"+i.name+" had "+i.votes+" votes.";
+                            response += "\n"+i.name.substring(3)+" had "+i.votes+" votes.";
                         }
                     } else return true;
                     reply(event, response, true);

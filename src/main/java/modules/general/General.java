@@ -43,15 +43,12 @@ public class General extends Module {
                     File f1 = new File(currentDir.getParentFile().getAbsoluteFile() + "/help.txt");
                     String[] help = IOUtils.toString(new FileInputStream(f1), "UTF-8").split("╡");
                     if(getRole(event) == ADMIN) {
+                        replyPrivately(event, help[6]);
                         replyPrivately(event, help[8]);
-                        replyPrivately(event, help[10]);
                     } else if(getRole(event) == MOD) {
                         replyPrivately(event, help[4]);
-                        replyPrivately(event, help[6]);
-
                     }
-                     else replyPrivately(event, help[2]);
-
+                    else replyPrivately(event, help[2]);
 
                     Log.log("User ["+event.getAuthor().getName()+"] requested help file. Role: "+getRole(event)+".");
                 } catch(Exception e) {
@@ -59,14 +56,14 @@ public class General extends Module {
                 }
                 return true;
             } else if(message.startsWith("!addinsult")) {
-                settings.addInsult(message.split(":")[1]);
+                settings.addInsult(message.substring(11));
                 new Loader().saveSettings(settings);
                 reply(event, "Insult added to insult database.", true);
-                Log.log("User ["+event.getAuthor().getName()+"] add insult "+message.split(":")[1]+" to the database.");
+                Log.log("User ["+event.getAuthor().getName()+"] add insult "+message.substring(11)+" to the database.");
                 return true;
             } else if(message.startsWith("!insult")) {
                 String insult = settings.getInsult();
-                if(replyPrivatelyToUser(event, message.split("\\s+")[1], insult+" - JukeBot")) {
+                if(replyPrivatelyToUser(event,message.split("\\s+")[1], "Received insult from an anonymous user: "+insult)) {
                     reply(event, "Insult sent!", false);
                     Log.log("User ["+event.getAuthor().getName()+"] sent insult ["+insult+"] to "+message.split("\\s+")[1]);
                 }
@@ -80,6 +77,7 @@ public class General extends Module {
             }
 
             if(getRole(event) < MOD) return false;
+
             if(message.startsWith("!ip")) {
                 URL whatismyip = new URL("http://checkip.amazonaws.com");
                 BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -91,12 +89,12 @@ public class General extends Module {
             else if(message.startsWith("!clear")) {
                 TextChannel tc = event.getMessage().getTextChannel();
                     MessageHistory history = new MessageHistory(tc);
-                    List<Message> messages = history.retrievePast(Integer.parseInt(message.split("\\s+")[1] + 1)).complete();
+                    List<Message> messages = history.retrievePast(Integer.parseInt(message.split("\\s+")[1]) + 1).complete();
                     if(messages != null && message.length() > 0) {
                         for(Message m : messages) { m.delete().queue(); }
                     }
                 event.getMessage().delete();
-                Log.log("User ["+event.getAuthor().getName()+"] requested to clear "+(Integer.parseInt(message.split("\\s+")[1]) + 1)+" messages from text channel "+tc.getName()+".");
+                Log.log("User ["+event.getAuthor().getName()+"] requested to clear "+(Integer.parseInt(message.split("\\s+")[1]) + 1) +" messages from text channel "+tc.getName()+".");
             }
 
             else if(message.equals("!cleanup")) {

@@ -44,14 +44,14 @@ public class LAN extends Module {
             if(activeMatch != null) {
                 for(String s : activeMatch.t1_players) {
                     if(s.equals(event.getAuthor().getName())) {
-                        reply(event, "You are on "+activeMatch.team1Name+". Use this to connect: "+settings.getSetip(), true);
+                        reply(event, "```You ("+event.getAuthor().getName()+") are on "+activeMatch.team1Name+". Use this to connect: "+settings.getSetip()+"```", true);
                         Log.log("User ["+event.getAuthor().getName()+"] issued command *lan. Response: "+"You are on "+activeMatch.team1Name+". Use this to connect: "+settings.getSetip());
                         return true;
                     }
                 }
                 for(String s : activeMatch.t2_players) {
                     if(s.equals(event.getAuthor().getName())) {
-                        reply(event, "You are on "+activeMatch.team2Name+". Use this to connect: "+settings.getSetip(), true);
+                        reply(event, "```You ("+event.getAuthor().getName()+") are on "+activeMatch.team2Name+". Use this to connect: "+settings.getSetip()+"```", true);
                         Log.log("User ["+event.getAuthor().getName()+"] issued command *lan. Response: "+"You are on "+activeMatch.team1Name+". Use this to connect: "+settings.getSetip());
                         return true;
                     }
@@ -73,17 +73,21 @@ public class LAN extends Module {
                 try {
                     String discordID;
                     try {
-                        discordID = event.getGuild().getMembersByName(tokens[1], true).get(0).getUser().getId();
+                        discordID = event.getGuild().getMembersByName(tokens[2], true).get(0).getUser().getId();
                     } catch(Exception e) {
-                        discordID = event.getGuild().getMembersByNickname(tokens[1], true).get(0).getUser().getId();
+                        discordID = event.getGuild().getMembersByNickname(tokens[2], true).get(0).getUser().getId();
                     }
-                    boolean result = settings.addEntry(tokens[2], discordID, message.split("\\s+")[3], message.split("\\s+")[4]);
+                    boolean result = settings.addEntry(tokens[2], discordID, message.split("\\s+")[3], String.valueOf(Integer.parseInt(message.split("\\s+")[4])));
                     if(!result) reply(event, "Added player "+tokens[2]+" with skill "+tokens[4]+" / 1000 in game "+tokens[3]+" to database.", true);
                     else reply(event, "Entry already existed. Skill updated to "+tokens[4]+" / 1000 in game "+tokens[3], true);
                     Log.log("User ["+event.getAuthor().getName()+"] added player "+tokens[2]+" with skill "+tokens[4]+" / 1000 in game "+tokens[3]+" to database. Overwrote? "+result);
                     new Loader().saveSettings(settings);
                     return true;
-                } catch(Exception e) {
+                } catch(NumberFormatException e) {
+                    reply(event, "Skill must be a number.", true);
+                    return true;
+                }
+                catch(Exception e) {
                     reply(event, "Could not find player "+tokens[1]+". Double check their Discord username.", true);
                     return true;
                 }
@@ -187,6 +191,11 @@ public class LAN extends Module {
                 }
                 try {
                     activeMatch = results.get(Integer.parseInt(tokens[1]));
+
+                    // Send replies to all users
+                    for(int i = 0; i < activeMatch.t1_players.size(); i++) replyPrivatelyToUser(event,  activeMatch.t1_players.get(i),"```You are on "+activeMatch.team1Name+". Use this to connect: "+settings.getSetip()+"```");
+                    for(int i = 0; i < activeMatch.t2_players.size(); i++) replyPrivatelyToUser(event,  activeMatch.t2_players.get(i),"```You are on "+activeMatch.team2Name+". Use this to connect: "+settings.getSetip()+"```");
+
                     reply(event, "Active match set to #"+tokens[1]+".", true);
                     Log.log("User ["+event.getAuthor().getName()+"] choose match #"+tokens[1]+" as the active match.");
                 } catch(Exception e) {
@@ -211,7 +220,7 @@ public class LAN extends Module {
                 results.clear();
                 activeMatch = null;
                 activeGame = "";
-                reply(event, "Hard reset lan-utitilies module.", true);
+                reply(event, "Hard reset lan-utilities module.", true);
                 Log.log("User ["+event.getAuthor().getName()+"] issued command *end");
                 return true;
             }

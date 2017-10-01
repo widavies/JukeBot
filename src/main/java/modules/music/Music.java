@@ -85,7 +85,7 @@ public class Music extends Module {
                 reply(event, "Resuming tunes...", true);
                 Log.log("User ["+event.getAuthor().getName()+"] issued command: resume");
                 return true;
-            } else if (message.startsWith("!level")) {
+            } else if (message.startsWith("!volume")) {
                 int temp = queue.getVolume();
                 queue.setVolume(Integer.parseInt(message.split("\\s+")[1]));
                 reply(event, "Volume changed from "+temp+" to "+queue.getVolume(), true);
@@ -98,16 +98,15 @@ public class Music extends Module {
                 reply(event, "Playing song now.", true);
                 return true;
             } else if(message.startsWith("!summon")) {
-                if(message.split("\\s+").length == 2) {
-                    summonByName(event, queue, message.split(",")[1]);
+                if(message.length() >= 9) {
+                    summonByName(event, queue, message.substring(8));
                     return true;
                 }
-                else if(message.split(",").length == 1) {
+                else {
                     smartSummon(event, queue);
                     return true;
                 }
             }
-
 
         /* PLAYLIST MANAGEMENT */
             String[] tokens = message.split("\\s+");
@@ -132,15 +131,16 @@ public class Music extends Module {
             }
             else if(message.startsWith("!search")) {
                 smartSummon(event, queue);
-                Log.log("User ["+event.getAuthor().getName()+"] is searching YouTube with query: "+event.getMessage().getContent().substring(6));
+                Log.log("User ["+event.getAuthor().getName()+"] is searching YouTube with query: "+event.getMessage().getContent().substring(8));
 
-                Track track = new SpotifyToYoutube().search(event.getMessage().getContent().substring(6));
+                Track track = new SpotifyToYoutube().search(event.getMessage().getContent().substring(8));
                 if(track == null) {
-                    reply(event, "An error occurred when searching for the song. Check syntax?", true);
+                    reply(event, "An error occurred when searching for the song. Check syntax of command or spelling of query.", true);
                     return true;
                 } else {
                     queue.addNext(track);
-                        queue.skip();
+                    queue.skip();
+                    queue.play();
                     reply(event, "Found track, playing now...", true);
                 }
             }
@@ -149,12 +149,22 @@ public class Music extends Module {
                     reply(event, "You must specify a playlist name.", true);
                     return true;
                 } else if (tokens.length == 2) { // creating blank playlist
+                    PlaylistModel pm = settings.getPlaylist(tokens[1]);
+                    if(pm != null) {
+                        reply(event, "Playlist "+tokens[1]+" already exists.", true);
+                        return true;
+                    }
                     settings.addPlaylist(tokens[1], new ArrayList<>());
                     reply(event, "Created playlist " + tokens[1] + ". Use !p <name> add <url> to start adding songs.", true);
                     new Loader().saveSettings(settings);
                     Log.log("User ["+event.getAuthor().getName()+"] created an empty playlist, "+tokens[1]+".");
                     return true;
                 } else if (tokens[2].contains("spotify")) { // creating from Spotify playlist
+                    PlaylistModel pm = settings.getPlaylist(tokens[1]);
+                    if(pm != null) {
+                        reply(event, "Playlist "+tokens[1]+" already exists.", true);
+                        return true;
+                    }
                     // Smart playlist getter
                     reply(event, "Accessing Spotify and YouTube databases. This will take about 30 seconds.", true);
                     ArrayList<Track> tracks = new SpotifyToYoutube().convert(tokens[2]);
@@ -168,10 +178,15 @@ public class Music extends Module {
                     new Loader().saveSettings(settings);
                     return true;
                 } else if (tokens[2].equals("q")) {
+                    PlaylistModel pm = settings.getPlaylist(tokens[1]);
+                    if(pm != null) {
+                        reply(event, "Playlist "+tokens[1]+" already exists.", true);
+                        return true;
+                    }
                     settings.addPlaylist(tokens[1], queue.getTracks());
                     reply(event, "Created playlist " + tokens[1] + " from current queue with " + queue.getSongsInQueue() + " tracks.", true);
                     new Loader().saveSettings(settings);
-                    Log.log("User ["+event.getAuthor().getName()+"] created playlist "+tokens+" from the current queue.");
+                    Log.log("User ["+event.getAuthor().getName()+"] created playlist "+tokens[1]+" from the current queue.");
                     return true;
                 }
             } else if(message.startsWith("!iv")) {
@@ -228,10 +243,8 @@ public class Music extends Module {
                         return true;
                     }
                     pm.addTrack(new Track(tokens[3]));
-                    settings.remove(pm);
-                    settings.addPlaylist(tokens[1], pm.getTracks());
-                    reply(event, "1 song was added to playlist " + tokens[1] + ".", true);
                     new Loader().saveSettings(settings);
+                    reply(event, "1 song was added to playlist " + tokens[1] + ".", true);
                     Log.log("User ["+event.getAuthor().getName()+"] added url "+tokens[3]+" to playlist "+tokens[1]+".");
                     return true;
                 }

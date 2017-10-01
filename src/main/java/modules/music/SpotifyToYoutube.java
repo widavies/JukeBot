@@ -41,7 +41,6 @@ public class SpotifyToYoutube {
             SearchListResponse searchListResponse = search.execute();
             List<SearchResult> result = searchListResponse.getItems();
             return new Track("https://www.youtube.com/watch?v="+getID(result.iterator()));
-
         } catch(Exception e) {
             Log.log("Converter failed with error message: "+e.getMessage());
         }

@@ -1,4 +1,4 @@
-﻿+DEFAULT+
+﻿╡DEFAULT╡
 ```Markdown
 #General
     • *lan - gets info about the active lan match
@@ -12,7 +12,7 @@
     • add <url> - add a YouTube, SoundCloud, Twitch Stream, etc. to the queue.
     • play - plays the queue if it's not currently playing
 ```
-+MOD+
+╡MOD╡
 ```Markdown
 #General
     • *lan - gets info about the active lan match
@@ -52,7 +52,7 @@
     • !cleanup - removes some bot messages from all text channels
     • !dump - receive a copy of the bot log file
 ```
-+ADMIN1+
+╡ADMIN1╡
 ```Markdown
 #General
     • !clear <#> - removes the specified amount of messages from the current text channel.
@@ -87,7 +87,7 @@
     • !p del <name> - deletes the current playlist from the disk
     • !ls - lists the playlists being stored locally
 ```
-+ADMIN2+
+╡ADMIN2╡
 ```Markdown
 #Lan-utils
     • *lan - use this command to figure out what team you're on
