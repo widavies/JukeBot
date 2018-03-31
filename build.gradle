@@ -1,6 +1,7 @@
 version '1.0'
 
 apply plugin: 'java'
+apply plugin: 'kotlin'
 apply plugin: 'idea'
 
 sourceCompatibility = 1.8
@@ -19,6 +20,8 @@ dependencies {
     compile 'net.dv8tion:JDA:3.3.0_265'
     compile 'com.sedmelluq:lavaplayer:1.2.42'
     compile "ie.corballis:sox-java:1.0.1"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.31"
+    compile 'com.google.cloud:google-cloud-speech:0.32.0-alpha'
     compile group: 'edu.cmu.sphinx', name: 'sphinx4-core',  version:'5prealpha-SNAPSHOT'
     compile group: 'edu.cmu.sphinx', name: 'sphinx4-data',  version:'5prealpha-SNAPSHOT'
     compile('se.michaelthelin.spotify:spotify-web-api-java:1.5.0') {
@@ -27,4 +30,24 @@ dependencies {
     compile 'commons-beanutils:commons-beanutils:20030211.134440'
     compile 'com.google.apis:google-api-services-youtube:v3-rev183-1.22.0'
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+buildscript {
+    ext.kotlin_version = '1.2.31'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }

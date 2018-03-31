@@ -2,11 +2,9 @@ package main;
 
 import models.Loader;
 import models.Settings;
-import modules.Module;
-import modules.general.General;
-import modules.lanutils.LAN;
-import modules.music.Music;
-import modules.votes.Votes;
+import modules.Mod;
+import modules.General;
+import modules.Voice;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import tools.Constants;
@@ -27,7 +25,7 @@ import java.util.ArrayList;
 
 public class Main extends ListenerAdapter {
 
-    private final ArrayList<Module> modules;
+    private final ArrayList<Mod> modules;
 
     public Main() {
         Settings settings = new Loader().getSettings();
@@ -38,28 +36,39 @@ public class Main extends ListenerAdapter {
 
         modules = new ArrayList<>();
         modules.add(new General());
-        modules.add(new Music());
-        modules.add(new LAN());
-        modules.add(new Votes());
-
-        for(Module m : modules) Log.log("Loaded module "+m.getDisplayName()+" successfully");
+        modules.add(new Voice(modules));
     }
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        for(Module m : modules) {
-            if(event.getChannel().getName().equalsIgnoreCase("importantvideos") && !event.getMessage().getRawContent().startsWith("https://www.youtube.com")) {
+        for(Mod m : modules) {
+            /*
+             * Channel management
+             */
+            String textChannel = event.getChannel().getName().toLowerCase();
+
+            if((textChannel.equals("videos") && !event.getMessage().getRawContent().contains("youtube.com"))
+                    || (textChannel.equals("reddit") && !event.getMessage().getRawContent().contains("reddit.com"))
+                    || (textChannel.equals("songs") && !event.getMessage().getRawContent().contains("spotify.com"))) {
                 event.getMessage().delete().queue();
                 return;
             }
-            m.processCommand(event);
+
+            m.setEvent(event);
+
+            try {
+                m.processCommand(event.getMessage().getRawContent());
+            } catch(Exception e) {
+                Log.logError("Failed to process a command in a module.");
+            }
+
         }
     }
 
     public static void main(String[] args) {
         Log.log("Starting JukeBot v0.2");
         try {
-            new JDABuilder(AccountType.BOT).setToken(Constants.DISCORD_TOKEN).addEventListener(new Main()).buildBlocking();
+            new JDABuilder(AccountType.BOT).setToken(Constants.TOKEN).addEventListener(new Main()).buildBlocking();
         } catch (InterruptedException e) {
             Log.log("Interrupted exception.");
         } catch (RateLimitedException e) {

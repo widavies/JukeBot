@@ -16,7 +16,6 @@ import com.wrapper.spotify.methods.authentication.ClientCredentialsGrantRequest;
 import com.wrapper.spotify.models.ClientCredentials;
 import com.wrapper.spotify.models.Playlist;
 import com.wrapper.spotify.models.PlaylistTrack;
-import tools.Constants;
 import tools.Log;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class SpotifyToYoutube {
             YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, request1 -> {
             }).setApplicationName("JukeBot").build();
             YouTube.Search.List search = youtube.search().list("id,snippet");
-            search.setKey(Constants.YOUTUBE_API_KEY);
+           // search.setKey(Constants.YOUTUBE_API_KEY);
             search.setType("video");
             search.setMaxResults((long)1);
             search.setQ(query);
@@ -53,7 +52,7 @@ public class SpotifyToYoutube {
         final JsonFactory JSON_FACTORY = new JacksonFactory();
 
         try {
-            Api api = Api.builder().clientId(Constants.SPOTIFY_CLIENT_ID).clientSecret(Constants.CLIENT_SECRET).build();
+            Api api = null;//Api.builder().clientId(Constants.SPOTIFY_CLIENT_ID).clientSecret(Constants.CLIENT_SECRET).build();
             final ClientCredentialsGrantRequest request = api.clientCredentialsGrant().build();
             final SettableFuture<ClientCredentials> responseFuture = request.getAsync();
             Futures.addCallback(responseFuture, new FutureCallback<ClientCredentials>() {
@@ -75,7 +74,7 @@ public class SpotifyToYoutube {
             YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, request1 -> {
             }).setApplicationName("JukeBot").build();
             YouTube.Search.List search = youtube.search().list("id,snippet");
-            search.setKey(Constants.YOUTUBE_API_KEY);
+            //search.setKey(Constants.YOUTUBE_API_KEY);
             search.setType("video");
             search.setMaxResults((long)1);
 
